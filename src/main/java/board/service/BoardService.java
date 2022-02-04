@@ -1,5 +1,11 @@
 package board.service;
 
-public interface BoardService {
+import board.dto.BoardDTO;
 
+import java.util.List;
+
+public interface BoardService {
+	
+	 List<BoardDTO> selectBoardList() throws Exception;
+	
 }
