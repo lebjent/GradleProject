@@ -17,7 +17,7 @@
 	</select>
 	
 	<!-- 게시글 작성 -->
-	<insert id="insertBoard" parameterType="BoardDTO" >
+	<insert id="insertBoard" parameterType="BoardDTO" useGeneratedKeys="true" keyProperty="boardIdx">
 		INSERT INTO board_tbl
 			(
 			title,
@@ -44,7 +44,7 @@
 	<!-- 게시판 업데이트 -->
 	<update id="hitCount" parameterType="int">
 		UPDATE board_tbl
-		SET hit_cnt = hit_cnt + 1
+		SET hit_cnt = IFNULL(hit_cnt,0)+1
 		WHERE board_Idx = #{boardIdx}
 	</update>
 	
@@ -73,4 +73,55 @@
                 board_idx = #{boardIdx}
 	</update>
 	
+	<!-- 첨부파일 저장하는 테이블 -->
+	<insert id="insertBoardFileList" parameterType="BoardFileDTO">
+		INSERT INTO file_tbl
+			(
+				board_idx, 
+				original_file_name, 
+				stored_file_path, 
+				file_size, 
+				creator_id, 
+				created_datetime
+			)
+			VALUES
+			<foreach collection="list" item="item" separator=",">
+					(
+						#{item.boardIdx},
+						#{item.originalFileName},
+						#{item.storedFilePath},
+						#{item.fileSize},
+						'admin',
+						now()
+					)		
+			</foreach>
+	</insert>
+	
+	<!-- 파일리스트 불러오기 -->
+	<select id="boardFileList" parameterType="int" resultType="BoardFileDTO">
+		SELECT
+			idx,
+			board_idx,
+			original_file_name,
+			FORMAT(ROUND(file_size/1024),0) AS file_size
+		FROM
+		 	file_tbl
+		WHERE
+			board_idx = #{boardIdx}
+			AND deleted_yn = 'N'		
+	</select>
+	
+	<!-- 파일다운로드를 위한 정보 -->
+	<select id="boardFileInformation" parameterType="map" resultType="BoardFileDTO">
+		SELECT
+			original_file_name,
+			stored_file_path,
+			file_size
+		FROM
+			file_tbl
+		WHERE
+			idx = #{idx}
+			AND board_idx = #{boardIdx}
+			AND deleted_yn = 'N'		
+	</select>	
 </mapper>

@@ -3,9 +3,11 @@ package board.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.type.Alias;
 
 import board.dto.BoardDTO;
+import board.dto.BoardFileDTO;
 
 @Mapper
 public interface BoardMapper {
@@ -28,4 +30,13 @@ public interface BoardMapper {
 	//게시판 삭제 처리
 	public void deleteBoard(int boardIdx) throws Exception;
 	
+	//첨부파일 데이터 저장
+	public void insertBoardFileList(List<BoardFileDTO> list)throws Exception;
+	
+	//첨부파일 리스트 불러오기
+	public List<BoardFileDTO> boardFileList(int boardIdx) throws Exception;
+	
+	//다운로드한 파일정보 불러오기
+	BoardFileDTO boardFileInformation(@Param("idx") int idx,@Param("boardIdx") int boardIdx) throws Exception;
+
 }

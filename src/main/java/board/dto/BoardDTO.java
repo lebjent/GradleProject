@@ -1,6 +1,7 @@
 package board.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
@@ -16,5 +17,7 @@ import lombok.Data;
 	    private LocalDateTime createdDatetime;
 	    private String updaterId;
 	    private LocalDateTime updatedDatetime;
+	    
+	    private List<BoardFileDTO> fileList;
 	
 }
