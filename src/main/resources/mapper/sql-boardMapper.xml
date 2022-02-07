@@ -1,6 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="mapper.sql-boardMapper">
-
-
+<mapper namespace="board.mapper.BoardMapper">
+	
+	<!-- 게시글 리스트 -->
+	<select id="selectBoardList" resultType="BoardDTO">
+		   SELECT
+                board_idx,
+                title,
+                hit_cnt,
+                created_datetime
+            FROM
+                board_tbl
+            WHERE
+                deleted_yn = 'N'
+            ORDER BY board_idx DESC
+	</select>
+	
+	<!-- 게시글 작성 -->
+	<insert id="insertBoard" parameterType="BoardDTO" >
+		INSERT INTO board_tbl
+			(
+			title,
+			contents,
+			created_datetime,
+			creator_id
+			)
+		 VALUE
+		 (
+		 	#{title},
+		 	#{contents},
+		 	now(),
+		 	'admin'
+		 )
+	</insert>
+	
+	<!-- 게시글 상세내용 -->
+	<select id="boardDetail" parameterType="int" resultType="BoardDTO">
+		SELECT * FROM 
+		board_tbl
+		WHERE board_Idx = #{boardIdx}
+	</select>
+	
+	<!-- 게시판 업데이트 -->
+	<update id="hitCount" parameterType="int">
+		UPDATE board_tbl
+		SET hit_cnt = hit_cnt + 1
+		WHERE board_Idx = #{boardIdx}
+	</update>
+	
+	<!-- 게시글 삭제시 업데이트 처리 -->
+	<update id="deleteBoard" parameterType="int">
+            UPDATE
+                board_tbl
+            SET
+                deleted_yn = 'Y',
+                updated_datetime = NOW(),
+                updater_id = 'admin'
+            WHERE
+                board_idx = #{boardIdx}
+	</update>
+	
+	<!-- 게시글 수정시 업데이트 처리 -->
+	<update id="updateBoard" parameterType="BoardDTO">
+		   UPDATE 
+                board_tbl 
+            SET
+                title = #{title},
+                contents = #{contents},
+                updated_datetime = NOW(),
+                updater_id = 'admin'
+            WHERE
+                board_idx = #{boardIdx}
+	</update>
+	
 </mapper>
